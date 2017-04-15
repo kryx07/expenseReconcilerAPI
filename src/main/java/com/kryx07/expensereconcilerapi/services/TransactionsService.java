@@ -1,27 +1,26 @@
 package com.kryx07.expensereconcilerapi.services;
 
-import com.kryx07.expensereconcilerapi.logic.FileProcessor;
+import com.kryx07.expensereconcilerapi.logic.PayableHandler;
+import com.kryx07.expensereconcilerapi.utils.FileProcessor;
 import com.kryx07.expensereconcilerapi.model.transactions.Transactions;
 import com.kryx07.expensereconcilerapi.model.transactions.Transaction;
-import com.kryx07.expensereconcilerapi.model.users.User;
 import com.kryx07.expensereconcilerapi.model.users.Users;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.HashMap;
-import java.util.Map;
 
 @Service
 public class TransactionsService {
 
     private FileProcessor<Transactions> transactionsFileProcessor;
     private UsersService usersService;
+    private PayableHandler payableHandler;
 
     public TransactionsService() {
         this.transactionsFileProcessor = new FileProcessor<>("transactions.o");
-        ;
         this.usersService = new UsersService();
+        this.payableHandler=new PayableHandler();
     }
 
     public Transaction getTransactionById(String id) {
@@ -51,15 +50,14 @@ public class TransactionsService {
             return false;
         }
 
+        transaction.setFractionalAmount(payableHandler.getFractionalAmount(transaction));
+        //transaction.setFractionalAmount(BigDecimal.ONE);
+        transaction.setPayables(payableHandler.getPayables(transaction));
+
         transactions.addTransaction(transaction);
+        transactionsFileProcessor.save(transactions);
+        return true;
 
-        if(transactions.contains(transaction.getId())){
-            reconcileTransaction(transaction);
-            transactionsFileProcessor.save(transactions);
-            return true;
-        }
-
-        return false;
     }
 
     public boolean contains(Transaction transaction) {
@@ -106,34 +104,5 @@ public class TransactionsService {
     public boolean deleteAll() {
         transactionsFileProcessor.save(new Transactions(new HashMap<>()));
         return true;
-    }
-
-    private void reconcileTransaction(Transaction transaction) {
-        User payer = transaction.getPayer();
-        Users reconcilingUsers = transaction.getReconcilingUsers();
-        BigDecimal payback = transaction
-                .getAmount()
-                .divide(BigDecimal.valueOf(reconcilingUsers.size()));
-        reconcilingUsers
-                .getUsers()
-                .values()
-                .stream()
-                .filter(user -> !user.equals(payer))
-                .forEach(user -> addAmountPayable(user,payer,payback));
-
-    }
-
-    private void addAmountPayable(User user, User payer, BigDecimal amount) {
-        Map<String, BigDecimal> amountPayable = user.getAmountPayable();
-        if(amountPayable == null){
-            amountPayable = new HashMap<String,BigDecimal>();
-        }
-        if (amountPayable.containsKey(payer)) {
-            amountPayable.get(payer).add(amount);
-        } else {
-            amountPayable.put(payer.getUserName(), amount);
-        }
-
-        user.setAmountPayable(amountPayable);
     }
 }

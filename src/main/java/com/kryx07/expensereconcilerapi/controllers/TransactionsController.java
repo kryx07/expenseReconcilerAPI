@@ -1,5 +1,6 @@
 package com.kryx07.expensereconcilerapi.controllers;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.kryx07.expensereconcilerapi.model.transactions.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,7 +28,7 @@ public class TransactionsController {
     public ResponseEntity<Transactions> getAllTransactions() {
         return transactionsService.getAllTransactions() == null
                 ? new ResponseEntity<Transactions>(transactionsService
-                    .createTransactionsWithError("There are no transactions!"), HttpStatus.NOT_FOUND)
+                .createTransactionsWithError("There are no transactions!"), HttpStatus.NOT_FOUND)
                 : new ResponseEntity<Transactions>(transactionsService.getAllTransactions(), HttpStatus.OK);
     }
 
@@ -48,7 +49,7 @@ public class TransactionsController {
                 new ResponseEntity<Transactions>(transactionsService.getBookByAuthor(author), HttpStatus.OK);
     }*/
 
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
     public ResponseEntity<Transaction> addTransaction(@RequestBody Transaction transaction) {
 
         transactionsService.addTransaction(transaction);

@@ -10,19 +10,25 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Transaction implements Serializable {
 
     private long serialVersionUID = 83843247273768l;
 
-
     private String id;
     private LocalDate addDate;
     private User payer;
     private String description;
+    private BigDecimal amount;
+    private Users reconcilingUsers;
+    boolean isCommon;
     @ApiModelProperty(hidden = true)
-//    @JsonProperty(value = "errorMessage", access = JsonProperty.Access.READ_ONLY)
+    private Map<String, Payable> payables;
+    @ApiModelProperty(hidden = true)
+    private BigDecimal fractionalAmount;
+    @ApiModelProperty(hidden = true)
     private String errorMessage;
 
     @JsonIgnore
@@ -34,10 +40,6 @@ public class Transaction implements Serializable {
         this.id = id;
     }
 
-    private BigDecimal amount;
-
-    private Users reconcilingUsers;
-
     public LocalDate getAddDate() {
         return addDate;
     }
@@ -45,7 +47,6 @@ public class Transaction implements Serializable {
     public void setAddDate(LocalDate addDate) {
         this.addDate = addDate;
     }
-
 
     public BigDecimal getAmount() {
         return amount;
@@ -77,6 +78,30 @@ public class Transaction implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public boolean isCommon() {
+        return isCommon;
+    }
+
+    public void setCommon(boolean common) {
+        isCommon = common;
+    }
+
+    public Map<String, Payable> getPayables() {
+        return payables;
+    }
+
+    public void setPayables(Map<String, Payable> payables) {
+        this.payables = payables;
+    }
+
+    public BigDecimal getFractionalAmount() {
+        return fractionalAmount;
+    }
+
+    public void setFractionalAmount(BigDecimal fractionalAmount) {
+        this.fractionalAmount = fractionalAmount;
     }
 
     //@JsonProperty

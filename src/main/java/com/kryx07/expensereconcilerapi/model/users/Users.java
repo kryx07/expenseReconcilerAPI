@@ -57,7 +57,7 @@ public class Users implements Serializable{
         return users.size();
     }
 
-    public boolean update(String userName, User user) {
+   /* public boolean update(String userName, User user) {
         try {
             users.replace(userName, user);
             return true;
@@ -66,6 +66,6 @@ public class Users implements Serializable{
             return false;
         }
 
-    }
+    }*/
 
 }

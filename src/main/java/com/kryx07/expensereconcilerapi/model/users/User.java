@@ -14,24 +14,12 @@ public class User implements Serializable {
     private long serialVersionUID = 53877953648246l;
     private String userName;
 
-    @ApiModelProperty(hidden = true)
-    //@JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Map<String, BigDecimal> amountPayable;//=new HashMap<>();
-
     public String getUserName() {
         return userName;
     }
 
     public void setUserName(String userName) {
         this.userName = userName;
-    }
-
-    public Map<String, BigDecimal> getAmountPayable() {
-        return amountPayable;
-    }
-
-    public void setAmountPayable(Map<String, BigDecimal> amountPayable) {
-        this.amountPayable = amountPayable;
     }
 
     @Override

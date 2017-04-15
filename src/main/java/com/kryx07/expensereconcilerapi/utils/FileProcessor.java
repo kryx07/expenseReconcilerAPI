@@ -1,6 +1,5 @@
-package com.kryx07.expensereconcilerapi.logic;
+package com.kryx07.expensereconcilerapi.utils;
 
-import com.kryx07.expensereconcilerapi.model.transactions.Transactions;
 import org.apache.log4j.Logger;
 
 import java.io.*;

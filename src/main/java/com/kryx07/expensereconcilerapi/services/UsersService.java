@@ -1,13 +1,11 @@
 package com.kryx07.expensereconcilerapi.services;
 
-import com.kryx07.expensereconcilerapi.logic.FileProcessor;
+import com.kryx07.expensereconcilerapi.utils.FileProcessor;
 import com.kryx07.expensereconcilerapi.model.users.User;
 import com.kryx07.expensereconcilerapi.model.users.Users;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
-import java.util.Map;
 
 @Service
 public class UsersService {
