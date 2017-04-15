@@ -68,4 +68,21 @@ public class Users implements Serializable{
 
     }*/
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Users users1 = (Users) o;
+
+        if (serialVersionUID != users1.serialVersionUID) return false;
+        return users != null ? users.equals(users1.users) : users1.users == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (serialVersionUID ^ (serialVersionUID >>> 32));
+        result = 31 * result + (users != null ? users.hashCode() : 0);
+        return result;
+    }
 }

@@ -30,7 +30,6 @@ public class PayableHandler {
                 .stream()
                 .filter(user -> !user.equals(transaction.getPayer()))
                 .forEach(user->payables.put(user.getUserName(),new Payable(transaction.getPayer(),transaction.getFractionalAmount())));
-                //.collect(Collectors.toList());
 
         return payables;
     }

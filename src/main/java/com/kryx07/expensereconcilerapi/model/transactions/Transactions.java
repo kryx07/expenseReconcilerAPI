@@ -8,20 +8,18 @@ import java.util.UUID;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.kryx07.expensereconcilerapi.model.users.User;
-import com.kryx07.expensereconcilerapi.services.UsersService;
 import io.swagger.annotations.ApiModelProperty;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Transactions implements Serializable {
 
-    public Transactions(Map<String, Transaction> bookMap) {
-        this.bookMap = bookMap;
+    public Transactions(Map<String, Transaction> transactions) {
+        this.transactions = transactions;
     }
 
     private long serialVersionUID = 83877944648906l;
 
-    private Map<String, Transaction> bookMap = new HashMap<>();
+    private Map<String, Transaction> transactions = new HashMap<>();
 
     @ApiModelProperty(hidden = true)
     @JsonProperty(value = "errorMessage", access = JsonProperty.Access.READ_ONLY)
@@ -38,25 +36,25 @@ public class Transactions implements Serializable {
     }
 
 
-    public Map<String, Transaction> getBookMap() {
-        return bookMap;
+    public Map<String, Transaction> getTransactions() {
+        return transactions;
     }
 
 
-    public void setBookMap(Map<String, Transaction> bookMap) {
-        this.bookMap = bookMap;
+    public void setTransactions(Map<String, Transaction> transactions) {
+        this.transactions = transactions;
     }
 
     public String addTransaction(Transaction transaction) {
 
         transaction.setId(UUID.randomUUID().toString());
-        bookMap.put(transaction.getId(), transaction);
+        transactions.put(transaction.getId(), transaction);
         return transaction.getId();
     }
 
     public boolean deleteBook(String id) {
         try {
-            bookMap.remove(id);
+            transactions.remove(id);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -65,12 +63,12 @@ public class Transactions implements Serializable {
     }
 
     public Transaction get(String id) {
-        return bookMap.get(id);
+        return transactions.get(id);
     }
 
     public boolean update(String id, Transaction newTransaction) {
         try {
-            bookMap.replace(id, newTransaction);
+            transactions.replace(id, newTransaction);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -80,19 +78,19 @@ public class Transactions implements Serializable {
     }
 
     public boolean contains(Transaction transaction) {
-        System.out.println(bookMap.containsValue(transaction));
-        return bookMap.containsValue(transaction);
+        System.out.println(transactions.containsValue(transaction));
+        return transactions.containsValue(transaction);
     }
 
     public boolean contains(String id) {
-        return bookMap.containsKey(id);
+        return transactions.containsKey(id);
     }
 
     @Override
     public String toString() {
         return "Books{" +
                 "serialVersionUID=" + serialVersionUID +
-                ", bookMap=" + bookMap +
+                ", transactions=" + transactions +
                 ", errorMessage='" + errorMessage + '\'' +
                 '}';
     }
