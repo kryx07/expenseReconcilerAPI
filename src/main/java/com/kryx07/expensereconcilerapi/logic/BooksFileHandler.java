@@ -1,7 +1,7 @@
-package pl.sda.hello.logic;
+package com.kryx07.expensereconcilerapi.logic;
 
 import org.apache.log4j.Logger;
-import pl.sda.hello.model.Books;
+import com.kryx07.expensereconcilerapi.model.Transactions;
 
 import java.io.*;
 
@@ -19,11 +19,11 @@ public class BooksFileHandler {
 
     private String booksFile = "books.o";
 
-    public void save(Books books) {
+    public void save(Transactions transactions) {
 
         try (FileOutputStream fileOutputStream = new FileOutputStream(booksFile);
              ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);) {
-            objectOutputStream.writeObject(books);
+            objectOutputStream.writeObject(transactions);
         } catch (IOException e) {
             logger.debug(e.getMessage());
             e.printStackTrace();
@@ -32,12 +32,12 @@ public class BooksFileHandler {
         System.out.printf("Serialized data is saved in " + booksFile + System.lineSeparator());
     }
 
-    public Books readAll() {
+    public Transactions readAll() {
 
-        Books books = null;
+        Transactions transactions = null;
         try (FileInputStream fileIn = new FileInputStream(booksFile);
              ObjectInputStream in = new ObjectInputStream(fileIn);) {
-            books = (Books) in.readObject();
+            transactions = (Transactions) in.readObject();
         } catch (FileNotFoundException | NullPointerException e) {
             logger.debug(e.getMessage() + "The file doesn't exist yet - no source to readAll from.");
         } catch (IOException i) {
@@ -45,7 +45,7 @@ public class BooksFileHandler {
         } catch (ClassNotFoundException c) {
             logger.debug(c.getMessage() + "Books class not found");
         }
-        return books;
+        return transactions;
     }
 
 }

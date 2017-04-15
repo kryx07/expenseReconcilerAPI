@@ -1,4 +1,4 @@
-package pl.sda.hello.controllers;
+package com.kryx07.expensereconcilerapi.controllers;
 
 import io.swagger.annotations.Api;
 import org.springframework.stereotype.Controller;

@@ -1,4 +1,4 @@
-package pl.sda.hello.config;
+package com.kryx07.expensereconcilerapi.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

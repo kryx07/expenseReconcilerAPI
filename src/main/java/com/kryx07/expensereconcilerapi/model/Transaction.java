@@ -1,4 +1,4 @@
-package pl.sda.hello.model;
+package com.kryx07.expensereconcilerapi.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Book implements Serializable {
+public class Transaction implements Serializable {
 
     private long serialVersionUID = 83843247273768l;
 
