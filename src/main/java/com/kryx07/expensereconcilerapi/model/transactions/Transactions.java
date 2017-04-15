@@ -1,4 +1,4 @@
-package com.kryx07.expensereconcilerapi.model;
+package com.kryx07.expensereconcilerapi.model.transactions;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -8,6 +8,8 @@ import java.util.UUID;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import com.kryx07.expensereconcilerapi.model.users.User;
+import com.kryx07.expensereconcilerapi.services.UsersService;
 import io.swagger.annotations.ApiModelProperty;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -45,7 +47,8 @@ public class Transactions implements Serializable {
         this.bookMap = bookMap;
     }
 
-    public String addBook(Transaction transaction) {
+    public String addTransaction(Transaction transaction) {
+
         transaction.setId(UUID.randomUUID().toString());
         bookMap.put(transaction.getId(), transaction);
         return transaction.getId();

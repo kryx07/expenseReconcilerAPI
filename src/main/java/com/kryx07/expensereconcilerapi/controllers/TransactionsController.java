@@ -1,12 +1,12 @@
 package com.kryx07.expensereconcilerapi.controllers;
 
-import com.kryx07.expensereconcilerapi.model.Transaction;
+import com.kryx07.expensereconcilerapi.model.transactions.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import com.kryx07.expensereconcilerapi.model.Transactions;
+import com.kryx07.expensereconcilerapi.model.transactions.Transactions;
 import com.kryx07.expensereconcilerapi.services.TransactionsService;
 
 import java.net.URI;
@@ -25,18 +25,18 @@ public class TransactionsController {
 
     @RequestMapping(value = "/all", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<Transactions> getAllTransactions() {
-        return transactionsService.getAllBooks() == null
-                ? new ResponseEntity<Transactions>(transactionsService.createBooksWithError("There are no books in the library"),
-                HttpStatus.NOT_FOUND)
-                : new ResponseEntity<Transactions>(transactionsService.getAllBooks(), HttpStatus.OK);
+        return transactionsService.getAllTransactions() == null
+                ? new ResponseEntity<Transactions>(transactionsService
+                    .createTransactionsWithError("There are no transactions!"), HttpStatus.NOT_FOUND)
+                : new ResponseEntity<Transactions>(transactionsService.getAllTransactions(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<Transaction> getTransactionById(@PathVariable String id) {
-        return transactionsService.getBookById(id) == null ?
-                new ResponseEntity<Transaction>(transactionsService.createBookWithError
+        return transactionsService.getTransactionById(id) == null ?
+                new ResponseEntity<Transaction>(transactionsService.createTransactionWithError
                         ("Transaction with id:" + id + " has not been found!"), HttpStatus.NOT_FOUND) :
-                new ResponseEntity<Transaction>(transactionsService.getBookById(id), HttpStatus.OK);
+                new ResponseEntity<Transaction>(transactionsService.getTransactionById(id), HttpStatus.OK);
     }
 
    /* @RequestMapping(method = RequestMethod.GET, produces = "application/json")
@@ -44,14 +44,14 @@ public class TransactionsController {
         Transactions transactionsByAuthor = transactionsService.getBookByAuthor(author);
         return transactionsByAuthor == null ?
                 new ResponseEntity<Transactions>(transactionsService
-                        .createBooksWithError("No books of " + author + " have been found!"), HttpStatus.NOT_FOUND) :
+                        .createTransactionsWithError("No books of " + author + " have been found!"), HttpStatus.NOT_FOUND) :
                 new ResponseEntity<Transactions>(transactionsService.getBookByAuthor(author), HttpStatus.OK);
     }*/
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Transaction> addTransaction(@RequestBody Transaction transaction) {
 
-        transactionsService.addBook(transaction);
+        transactionsService.addTransaction(transaction);
 
         URI uri = null;
         try {
@@ -80,8 +80,17 @@ public class TransactionsController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity deleteTransaction(@PathVariable String id){
+    public ResponseEntity deleteTransaction(@PathVariable String id) {
         return transactionsService.delete(id) ?
+                ResponseEntity.ok().build() :
+                ResponseEntity.badRequest().build();
+
+
+    }
+
+    @RequestMapping(value = "/all", method = RequestMethod.DELETE)
+    public ResponseEntity deleteAllTransaction() {
+        return transactionsService.deleteAll() ?
                 ResponseEntity.ok().build() :
                 ResponseEntity.badRequest().build();
 
