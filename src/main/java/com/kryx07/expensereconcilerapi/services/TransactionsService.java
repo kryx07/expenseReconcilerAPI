@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class TransactionsService {
@@ -44,7 +46,6 @@ public class TransactionsService {
         if (!transaction
                 .getReconcilingUsers()
                 .getUsers()
-                .values()
                 .stream()
                 .allMatch(u -> allUsers.contains(u))) {
             return false;
@@ -53,6 +54,8 @@ public class TransactionsService {
         transaction.setFractionalAmount(payableHandler.getFractionalAmount(transaction));
         //transaction.setFractionalAmount(BigDecimal.ONE);
         transaction.setPayables(payableHandler.getPayables(transaction));
+
+        //BigDecimal fractionalAmount = payableHandler.getFractionalAmount(transaction);
 
         transactions.addTransaction(transaction);
         transactionsFileProcessor.save(transactions);
@@ -65,7 +68,10 @@ public class TransactionsService {
     }
 
     public boolean contains(String id) {
-        return transactionsFileProcessor.readAll().contains(id);
+        Transactions transactions =Optional.ofNullable(
+                transactionsFileProcessor.readAll())
+                .orElse(new Transactions(new HashMap<>()));
+        return Optional.ofNullable(transactions.contains(id)).orElse(false);
     }
 
     public Transaction createTransactionWithError(String errorMessage) {

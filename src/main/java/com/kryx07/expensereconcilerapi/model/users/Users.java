@@ -2,71 +2,69 @@ package com.kryx07.expensereconcilerapi.model.users;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
-public class Users implements Serializable{
+public class Users implements Serializable {
 
     private long serialVersionUID = 13853924648436l;
 
-    private Map<String,User> users = new HashMap<>();
+    private Set<User> users = new HashSet<>();
 
-    public Users(HashMap<String,User> users) {
+    public Users(Set<User> users) {
         this.users = users;
     }
 
     public Users() {
     }
 
-    public Map<String,User>  getUsers() {
+    public Set<User> getUsers() {
         return users;
     }
 
-    public void setUsers(HashMap<String,User>  users) {
+    public void setUsers(Set<User> users) {
         this.users = users;
     }
 
-    public User get(String userName){
-        return users.get(userName);
+    public User get(String userName) {
+        return users
+                .stream()
+                .filter(u -> u.getUserName()
+                        .equals(userName))
+                .findFirst()
+                .orElse(null);
     }
 
-    public boolean add(User user){
-        if(users.containsKey(user.getUserName())){
+    public boolean add(User user) {
+        if (users.contains(user)) {
             return false;
         }
-        users.put(user.getUserName(),user);
+
+        users.add(user);
         return true;
     }
 
-    public boolean delete(String userName){
-        if(!users.containsKey(userName)){
+    public boolean delete(String userName) {
+
+        if (!users.contains(get(userName))) {
             return false;
         }
-        users.remove(userName);
+        users.remove(get(userName));
         return true;
     }
 
-    public boolean contains(String userName){
-        return users.containsKey(userName);
+    public boolean contains(String userName) {
+        return users.contains(get(userName));
     }
 
-    public boolean contains(User user){
-        return users.containsValue(user);
+    public boolean contains(User user) {
+        return users.contains(user);
     }
 
-    public int size(){
+    public int size() {
         return users.size();
     }
-
-   /* public boolean update(String userName, User user) {
-        try {
-            users.replace(userName, user);
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-
-    }*/
 
     @Override
     public boolean equals(Object o) {

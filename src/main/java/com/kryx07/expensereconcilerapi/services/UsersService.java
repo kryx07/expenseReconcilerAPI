@@ -6,6 +6,7 @@ import com.kryx07.expensereconcilerapi.model.users.Users;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 @Service
 public class UsersService {
@@ -20,7 +21,7 @@ public class UsersService {
 
         Users users = usersFileProcessor.readAll();
         if (users == null) {
-            users= new Users(new HashMap<String, User>());
+            users= new Users( new HashSet<User>());
         }
 
 

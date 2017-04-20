@@ -1,4 +1,4 @@
-package com.kryx07.expensereconcilerapi.model.transactions;
+package com.kryx07.expensereconcilerapi.model.payables;
 
 
 import com.kryx07.expensereconcilerapi.model.users.User;

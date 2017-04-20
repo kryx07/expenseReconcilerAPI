@@ -1,14 +1,12 @@
 package com.kryx07.expensereconcilerapi.services;
 
 import com.kryx07.expensereconcilerapi.logic.Reconciler;
+import com.kryx07.expensereconcilerapi.model.payables.Payables;
 import com.kryx07.expensereconcilerapi.model.users.Users;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
 
-/**
- * Created by wd40 on 16.04.17.
- */
 @Service
 public class ReconciliationService {
 
@@ -16,5 +14,9 @@ public class ReconciliationService {
 
     public Set<Users> getReconcilingParties(){
         return reconciler.getReconciliationParties();
+    }
+
+    public Payables getPayablesByReconcilingParties(Users users){
+        return reconciler.getPayablesByReconcilingParties(users);
     }
 }

@@ -2,7 +2,8 @@ package com.kryx07.expensereconcilerapi.model.transactions;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.kryx07.expensereconcilerapi.model.payables.Payable;
+import com.kryx07.expensereconcilerapi.model.payables.Payables;
 import com.kryx07.expensereconcilerapi.model.users.User;
 import com.kryx07.expensereconcilerapi.model.users.Users;
 import io.swagger.annotations.ApiModelProperty;
@@ -19,13 +20,13 @@ public class Transaction implements Serializable {
 
     private String id;
     private LocalDate addDate;
-    private User payer;
     private String description;
     private BigDecimal amount;
+    private User payer;
     private Users reconcilingUsers;
     boolean isCommon;
     @ApiModelProperty(hidden = true)
-    private Map<String, Payable> payables;
+    private Payables payables;
     @ApiModelProperty(hidden = true)
     private BigDecimal fractionalAmount;
     @ApiModelProperty(hidden = true)
@@ -88,11 +89,11 @@ public class Transaction implements Serializable {
         isCommon = common;
     }
 
-    public Map<String, Payable> getPayables() {
+    public Payables getPayables() {
         return payables;
     }
 
-    public void setPayables(Map<String, Payable> payables) {
+    public void setPayables(Payables payables) {
         this.payables = payables;
     }
 
