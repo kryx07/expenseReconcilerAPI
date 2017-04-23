@@ -2,33 +2,37 @@ package com.kryx07.expensereconcilerapi.model.transactions;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.kryx07.expensereconcilerapi.model.payables.Payable;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.kryx07.expensereconcilerapi.model.payables.Payables;
 import com.kryx07.expensereconcilerapi.model.users.User;
 import com.kryx07.expensereconcilerapi.model.users.Users;
 import io.swagger.annotations.ApiModelProperty;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Transaction implements Serializable {
 
-    private long serialVersionUID = 83843247273768l;
-
     private String id;
-    private LocalDate addDate;
-    private String description;
+
+    private long serialVersionUID = 83843247273768l;
+    private LocalDate date;
     private BigDecimal amount;
+    private String description;
+
+    private boolean common;
+    //@ApiModelProperty(hidden = true)
+
     private User payer;
-    private Users reconcilingUsers;
-    boolean isCommon;
+
+    //@ApiModelProperty(hidden = true)
+
+    private Users transactionParties;
     @ApiModelProperty(hidden = true)
     private Payables payables;
-    @ApiModelProperty(hidden = true)
-    private BigDecimal fractionalAmount;
     @ApiModelProperty(hidden = true)
     private String errorMessage;
 
@@ -41,12 +45,12 @@ public class Transaction implements Serializable {
         this.id = id;
     }
 
-    public LocalDate getAddDate() {
-        return addDate;
+    public LocalDate getDate() {
+        return date;
     }
 
-    public void setAddDate(LocalDate addDate) {
-        this.addDate = addDate;
+    public void setDate(LocalDate date) {
+        this.date = date;
     }
 
     public BigDecimal getAmount() {
@@ -57,12 +61,12 @@ public class Transaction implements Serializable {
         this.amount = amount;
     }
 
-    public Users getReconcilingUsers() {
-        return reconcilingUsers;
+    public String getDescription() {
+        return description;
     }
 
-    public void setReconcilingUsers(Users reconcilingUsers) {
-        this.reconcilingUsers = reconcilingUsers;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public User getPayer() {
@@ -72,21 +76,22 @@ public class Transaction implements Serializable {
     public void setPayer(User payer) {
         this.payer = payer;
     }
-
-    public String getDescription() {
-        return description;
+    @JsonIgnore
+    public Users getTransactionParties() {
+        return transactionParties;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    @JsonProperty("users")
+    public void setTransactionParties(Users transactionParties) {
+        this.transactionParties = transactionParties;
     }
 
     public boolean isCommon() {
-        return isCommon;
+        return common;
     }
 
     public void setCommon(boolean common) {
-        isCommon = common;
+        this.common = common;
     }
 
     public Payables getPayables() {
@@ -97,47 +102,17 @@ public class Transaction implements Serializable {
         this.payables = payables;
     }
 
-    public BigDecimal getFractionalAmount() {
-        return fractionalAmount;
-    }
-
-    public void setFractionalAmount(BigDecimal fractionalAmount) {
-        this.fractionalAmount = fractionalAmount;
-    }
-
-    //@JsonProperty
     public String getErrorMessage() {
         return errorMessage;
     }
 
-    //@JsonIgnore
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Transaction that = (Transaction) o;
-
-        if (serialVersionUID != that.serialVersionUID) return false;
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (addDate != null ? !addDate.equals(that.addDate) : that.addDate != null) return false;
-        if (errorMessage != null ? !errorMessage.equals(that.errorMessage) : that.errorMessage != null) return false;
-        if (amount != null ? !amount.equals(that.amount) : that.amount != null) return false;
-        return reconcilingUsers != null ? reconcilingUsers.equals(that.reconcilingUsers) : that.reconcilingUsers == null;
+    public String toString() {
+        return ReflectionToStringBuilder.toString(this);
     }
 
-    @Override
-    public int hashCode() {
-        int result = (int) (serialVersionUID ^ (serialVersionUID >>> 32));
-        result = 31 * result + (id != null ? id.hashCode() : 0);
-        result = 31 * result + (addDate != null ? addDate.hashCode() : 0);
-        result = 31 * result + (errorMessage != null ? errorMessage.hashCode() : 0);
-        result = 31 * result + (amount != null ? amount.hashCode() : 0);
-        result = 31 * result + (reconcilingUsers != null ? reconcilingUsers.hashCode() : 0);
-        return result;
-    }
 }

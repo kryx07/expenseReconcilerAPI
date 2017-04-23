@@ -1,6 +1,5 @@
 package com.kryx07.expensereconcilerapi.controllers;
 
-import com.kryx07.expensereconcilerapi.model.transactions.Transaction;
 import com.kryx07.expensereconcilerapi.model.users.User;
 import com.kryx07.expensereconcilerapi.model.users.Users;
 import com.kryx07.expensereconcilerapi.services.UsersService;

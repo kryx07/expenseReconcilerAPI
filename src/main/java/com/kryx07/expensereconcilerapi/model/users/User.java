@@ -1,6 +1,7 @@
 package com.kryx07.expensereconcilerapi.model.users;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 
@@ -8,7 +9,19 @@ import java.io.Serializable;
 public class User implements Serializable {
 
     private long serialVersionUID = 53877953648246l;
+
     private String userName;
+
+    @ApiModelProperty(value = "errorMessage", hidden = true)
+    private String errorMessage;
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
 
     public String getUserName() {
         return userName;

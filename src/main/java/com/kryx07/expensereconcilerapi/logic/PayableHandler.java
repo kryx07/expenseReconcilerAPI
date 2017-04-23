@@ -5,29 +5,37 @@ import com.kryx07.expensereconcilerapi.model.payables.Payables;
 import com.kryx07.expensereconcilerapi.model.transactions.Transaction;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
+import java.math.RoundingMode;
 
 public class PayableHandler {
-    public BigDecimal getFractionalAmount(Transaction transaction) {
 
-        return transaction.isCommon() ?
-                transaction.getAmount().divide(BigDecimal.valueOf(transaction.getReconcilingUsers().size())) :
-                transaction.getAmount().divide(BigDecimal.valueOf(transaction.getReconcilingUsers().size() - 1));
+    Transaction transaction;
+
+    public PayableHandler(Transaction transaction) {
+        this.transaction = transaction;
     }
 
-    public Payables getPayables(Transaction transaction) {
+    public Payables getPayables() {
 
-        Map<String, Payable> payables = new HashMap<>();
+        Payables payables = new Payables();
 
         transaction
-                .getReconcilingUsers()
+                .getTransactionParties()
                 .getUsers()
                 .stream()
                 .filter(user -> !user.equals(transaction.getPayer()))
-                .forEach(user->payables.put(user.getUserName(),new Payable(transaction.getPayer(),transaction.getFractionalAmount())));
+                .forEach(user -> payables.add(new Payable(transaction.getPayer(),user,getFractionalAmount())));
 
-        return new Payables(payables);
+        return payables;
+    }
+
+    private BigDecimal getFractionalAmount() {
+
+        return transaction.isCommon() ?
+                transaction.getAmount()
+                        .divide(BigDecimal.valueOf(transaction.getTransactionParties().size()),10, RoundingMode.CEILING):
+                transaction.getAmount()
+                        .divide(BigDecimal.valueOf(transaction.getTransactionParties().size() - 1),10, RoundingMode.CEILING);
     }
 
 

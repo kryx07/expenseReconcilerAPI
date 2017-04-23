@@ -1,45 +1,39 @@
 package com.kryx07.expensereconcilerapi.model.payables;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
+import com.kryx07.expensereconcilerapi.model.users.Users;
 
-public class Payables implements Serializable{
+import java.io.Serializable;
+import java.util.*;
+import java.util.stream.Collectors;
+
+public class Payables implements Serializable {
 
     private long serialVersionUID = 13862425326548l;
-    private Map<String,Payable> payables= new HashMap<>();
 
-    public Payables(Map<String, Payable> payables) {
-        this.payables = payables;
-    }
+    private List<Payable> payables = new ArrayList<>();
 
-    public Payables() {
-    }
-
-    public Map<String, Payable> getPayables() {
+    public List<Payable> getPayables() {
         return payables;
     }
 
-    public void setPayables(Map<String, Payable> payables) {
+    public void setPayables(List<Payable> payables) {
         this.payables = payables;
     }
 
-    public void add(String userName,Payable payable){
-        payables.put(userName,payable);
+    public void add(Payable payable){
+        payables.add(payable);
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    public Users getUsers(){
+        Users payers =  new Users(payables.stream().map(p->p.getPayer()).collect(Collectors.toSet()));
+        Users debtors =  new Users(payables.stream().map(p->p.getDebtor()).collect(Collectors.toSet()));
 
-        Payables payables1 = (Payables) o;
+        Users allUsers = new Users(new HashSet<>());
+        allUsers.addAll(debtors);
+        allUsers.addAll(payers);
 
-        return payables != null ? payables.equals(payables1.payables) : payables1.payables == null;
-    }
+        allUsers.distinct();
 
-    @Override
-    public int hashCode() {
-        return payables != null ? payables.hashCode() : 0;
+        return allUsers;
     }
 }

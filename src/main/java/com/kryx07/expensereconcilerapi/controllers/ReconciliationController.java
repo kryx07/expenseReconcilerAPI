@@ -1,6 +1,8 @@
 package com.kryx07.expensereconcilerapi.controllers;
 
 import com.kryx07.expensereconcilerapi.model.payables.Payables;
+import com.kryx07.expensereconcilerapi.model.users.User;
+import com.kryx07.expensereconcilerapi.model.users.UserGroups;
 import com.kryx07.expensereconcilerapi.model.users.Users;
 import com.kryx07.expensereconcilerapi.services.ReconciliationService;
 import com.kryx07.expensereconcilerapi.services.TransactionsService;
@@ -29,12 +31,15 @@ public class ReconciliationController {
     }
 
     @RequestMapping(value = "/all", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<Set<Users>> getReconcilingParties() {
-        return new ResponseEntity<Set<Users>>(reconciliationService.getReconcilingParties(), HttpStatus.OK);
+    public ResponseEntity<UserGroups> getAllReconcilingUserGroups() {
+        return new ResponseEntity<UserGroups>(reconciliationService.getAllReconcilingUserGroups(), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/selected", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/selected", method = RequestMethod.GET)
+    //, produces = "application/json", consumes = "application/json")
     public ResponseEntity<Payables> getPayablesByReconcilingParties(@RequestBody Users reconcilingParties) {
         return new ResponseEntity<Payables>(reconciliationService.getPayablesByReconcilingParties(reconcilingParties),HttpStatus.OK);
     }
+
+
 }

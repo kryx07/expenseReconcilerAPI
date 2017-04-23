@@ -1,16 +1,24 @@
 package com.kryx07.expensereconcilerapi.model.users;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import io.swagger.annotations.ApiModelProperty;
 
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Users implements Serializable {
 
     private long serialVersionUID = 13853924648436l;
 
+    private String id;
     private Set<User> users = new HashSet<>();
+
+    @ApiModelProperty(hidden = true)
+    private String errorMessage;
 
     public Users(Set<User> users) {
         this.users = users;
@@ -19,12 +27,28 @@ public class Users implements Serializable {
     public Users() {
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public Set<User> getUsers() {
         return users;
     }
 
     public void setUsers(Set<User> users) {
         this.users = users;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
     }
 
     public User get(String userName) {
@@ -40,9 +64,13 @@ public class Users implements Serializable {
         if (users.contains(user)) {
             return false;
         }
-
         users.add(user);
-        return true;
+        return users.contains(user);
+    }
+
+    public void addAll(Users users) {
+        users.getUsers().stream().forEach(u->add(u));
+
     }
 
     public boolean delete(String userName) {
@@ -51,7 +79,16 @@ public class Users implements Serializable {
             return false;
         }
         users.remove(get(userName));
-        return true;
+        return !users.contains(userName);
+    }
+
+    public boolean delete(User user) {
+
+        if (!users.contains(user)) {
+            return false;
+        }
+        users.remove(user);
+        return !users.contains(user);
     }
 
     public boolean contains(String userName) {
@@ -64,6 +101,15 @@ public class Users implements Serializable {
 
     public int size() {
         return users.size();
+    }
+
+    @JsonIgnore
+    public boolean isEmpty(){
+        return users==null;
+    }
+
+    public void distinct(){
+        users = users.stream().distinct().collect(Collectors.toSet());
     }
 
     @Override

@@ -1,64 +1,79 @@
 package com.kryx07.expensereconcilerapi.services;
 
 import com.kryx07.expensereconcilerapi.logic.PayableHandler;
-import com.kryx07.expensereconcilerapi.utils.FileProcessor;
-import com.kryx07.expensereconcilerapi.model.transactions.Transactions;
+import com.kryx07.expensereconcilerapi.logic.Reconciler;
 import com.kryx07.expensereconcilerapi.model.transactions.Transaction;
+import com.kryx07.expensereconcilerapi.model.transactions.Transactions;
+import com.kryx07.expensereconcilerapi.model.users.UserGroups;
 import com.kryx07.expensereconcilerapi.model.users.Users;
+import com.kryx07.expensereconcilerapi.utils.FileProcessor;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
 import java.util.Optional;
+
+import static com.kryx07.expensereconcilerapi.services.errorhandling.ErrorCodes.NO_TRANSACTIONS;
+import static com.kryx07.expensereconcilerapi.services.errorhandling.ErrorCodes.NO_TRANSACTION_WITH_ID;
 
 @Service
 public class TransactionsService {
 
     private FileProcessor<Transactions> transactionsFileProcessor;
+    private FileProcessor<UserGroups> reconcilingUserGroupsFileProcessor;
     private UsersService usersService;
-    private PayableHandler payableHandler;
+    private Reconciler reconciler;
 
     public TransactionsService() {
         this.transactionsFileProcessor = new FileProcessor<>("transactions.o");
+        this.reconcilingUserGroupsFileProcessor = new FileProcessor<>("reconcilingUsers.o");
         this.usersService = new UsersService();
-        this.payableHandler=new PayableHandler();
+        this.reconciler = new Reconciler();
     }
 
     public Transaction getTransactionById(String id) {
-        Transactions transactions = transactionsFileProcessor.readAll();
-        return transactions == null ? null : transactionsFileProcessor.readAll().get(id);
+        Transactions allTransactions = getAllTransactions();
+        return (allTransactions.isEmpty())
+                ? createTransactionWithError(NO_TRANSACTIONS.toString())
+                : Optional
+                .ofNullable(allTransactions.get(id))
+                .orElse(createTransactionWithError(NO_TRANSACTION_WITH_ID.toString() + id));
     }
 
     public Transactions getAllTransactions() {
-        return transactionsFileProcessor.readAll();
+        return Optional
+                .ofNullable(transactionsFileProcessor.readAll())
+                .orElse(createTransactionsWithError(NO_TRANSACTIONS.toString()));
     }
-
 
     public boolean addTransaction(Transaction transaction) {
 
-        Transactions transactions = transactionsFileProcessor.readAll();
-        if (transactions == null) {
-            transactions = new Transactions(new HashMap<String, Transaction>());
+        Transactions allTransactions = getAllTransactions();
+        if (allTransactions.isEmpty()) {
+            allTransactions = new Transactions(new ArrayList<>());
         }
 
         Users allUsers = usersService.getAllUsers();
+        /*if (allUsers.isEmpty()){
+            return false;
+        }*/
         if (!transaction
-                .getReconcilingUsers()
+                .getTransactionParties()
                 .getUsers()
                 .stream()
-                .allMatch(u -> allUsers.contains(u))) {
+                .allMatch(allUsers::contains)){
             return false;
         }
 
-        transaction.setFractionalAmount(payableHandler.getFractionalAmount(transaction));
-        //transaction.setFractionalAmount(BigDecimal.ONE);
-        transaction.setPayables(payableHandler.getPayables(transaction));
+        transaction.setPayables(new PayableHandler(transaction).getPayables());
 
-        //BigDecimal fractionalAmount = payableHandler.getFractionalAmount(transaction);
+        allTransactions.addTransaction(transaction);
 
-        transactions.addTransaction(transaction);
-        transactionsFileProcessor.save(transactions);
+        UserGroups allUserGroups = reconciler.getAllReconcilingUserGroups();
+        allUserGroups.add(transaction.getTransactionParties());
+
+        reconcilingUserGroupsFileProcessor.save(allUserGroups);
+        transactionsFileProcessor.save(allTransactions);
+
         return true;
 
     }
@@ -68,10 +83,11 @@ public class TransactionsService {
     }
 
     public boolean contains(String id) {
-        Transactions transactions =Optional.ofNullable(
+        Transactions transactions = Optional.ofNullable(
                 transactionsFileProcessor.readAll())
-                .orElse(new Transactions(new HashMap<>()));
+                .orElse(new Transactions(new ArrayList<>()));
         return Optional.ofNullable(transactions.contains(id)).orElse(false);
+
     }
 
     public Transaction createTransactionWithError(String errorMessage) {
@@ -101,14 +117,14 @@ public class TransactionsService {
         if (transactions == null || !transactions.contains(id)) {
             return false;
         }
-        boolean isDeleted = transactions.deleteBook(id);
+        boolean isDeleted = transactions.deleteTransaction(id);
         System.out.println(transactionsFileProcessor.readAll());
         transactionsFileProcessor.save(transactions);
         return isDeleted;
     }
 
     public boolean deleteAll() {
-        transactionsFileProcessor.save(new Transactions(new HashMap<>()));
+        transactionsFileProcessor.save(createTransactionsWithError(NO_TRANSACTIONS.toString()));
         return true;
     }
 }
