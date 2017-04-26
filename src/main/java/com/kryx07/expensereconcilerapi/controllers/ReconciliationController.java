@@ -1,20 +1,13 @@
 package com.kryx07.expensereconcilerapi.controllers;
 
 import com.kryx07.expensereconcilerapi.model.payables.Payables;
-import com.kryx07.expensereconcilerapi.model.users.User;
 import com.kryx07.expensereconcilerapi.model.users.UserGroups;
 import com.kryx07.expensereconcilerapi.model.users.Users;
 import com.kryx07.expensereconcilerapi.services.ReconciliationService;
-import com.kryx07.expensereconcilerapi.services.TransactionsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Set;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Created by wd40 on 16.04.17.
@@ -36,9 +29,17 @@ public class ReconciliationController {
     }
 
     @RequestMapping(value = "/selected", method = RequestMethod.GET)
-    //, produces = "application/json", consumes = "application/json")
-    public ResponseEntity<Payables> getPayablesByReconcilingParties(@RequestBody Users reconcilingParties) {
-        return new ResponseEntity<Payables>(reconciliationService.getPayablesByReconcilingParties(reconcilingParties),HttpStatus.OK);
+    public ResponseEntity<Users> getReconcilingPartiesById(@RequestParam(value = "id",required = true) String id) {
+        return new ResponseEntity<Users>(reconciliationService.getReconcilingUsersByGroupId(id),HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/payables", method = RequestMethod.GET)
+    public ResponseEntity<Payables> getPayablesByReconcilingParties(@RequestParam(value = "id",required = true) String id) {
+        return new ResponseEntity<Payables>(
+                reconciliationService
+                        .getPayablesByReconcilingUsers(
+                                reconciliationService
+                                        .getReconcilingUsersByGroupId(id)),HttpStatus.OK);
     }
 
 

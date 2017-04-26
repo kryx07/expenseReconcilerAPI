@@ -12,6 +12,7 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Optional;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Transaction implements Serializable {
@@ -78,7 +79,8 @@ public class Transaction implements Serializable {
     }
     @JsonIgnore
     public Users getTransactionParties() {
-        return transactionParties;
+        return Optional.ofNullable(transactionParties)
+                .orElse(new Users());
     }
 
     @JsonProperty("users")

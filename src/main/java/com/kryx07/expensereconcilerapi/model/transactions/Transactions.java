@@ -8,6 +8,7 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -106,6 +107,9 @@ public class Transactions implements Serializable {
     }
 
     public boolean contains(String id) {
+        if (transactions == null){
+            return false;
+        }
         return transactions.contains(get(id));
     }
 

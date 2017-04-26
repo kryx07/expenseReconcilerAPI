@@ -1,7 +1,6 @@
 package com.kryx07.expensereconcilerapi.services;
 
 import com.kryx07.expensereconcilerapi.logic.PayableHandler;
-import com.kryx07.expensereconcilerapi.logic.Reconciler;
 import com.kryx07.expensereconcilerapi.model.transactions.Transaction;
 import com.kryx07.expensereconcilerapi.model.transactions.Transactions;
 import com.kryx07.expensereconcilerapi.model.users.UserGroups;
@@ -21,13 +20,11 @@ public class TransactionsService {
     private FileProcessor<Transactions> transactionsFileProcessor;
     private FileProcessor<UserGroups> reconcilingUserGroupsFileProcessor;
     private UsersService usersService;
-    private Reconciler reconciler;
 
     public TransactionsService() {
         this.transactionsFileProcessor = new FileProcessor<>("transactions.o");
         this.reconcilingUserGroupsFileProcessor = new FileProcessor<>("reconcilingUsers.o");
         this.usersService = new UsersService();
-        this.reconciler = new Reconciler();
     }
 
     public Transaction getTransactionById(String id) {
@@ -68,7 +65,9 @@ public class TransactionsService {
 
         allTransactions.addTransaction(transaction);
 
-        UserGroups allUserGroups = reconciler.getAllReconcilingUserGroups();
+        UserGroups allUserGroups =
+                Optional.ofNullable(reconcilingUserGroupsFileProcessor.readAll())
+                        .orElse(new UserGroups());
         allUserGroups.add(transaction.getTransactionParties());
 
         reconcilingUserGroupsFileProcessor.save(allUserGroups);
@@ -86,7 +85,7 @@ public class TransactionsService {
         Transactions transactions = Optional.ofNullable(
                 transactionsFileProcessor.readAll())
                 .orElse(new Transactions(new ArrayList<>()));
-        return Optional.ofNullable(transactions.contains(id)).orElse(false);
+        return transactions.contains(id);
 
     }
 

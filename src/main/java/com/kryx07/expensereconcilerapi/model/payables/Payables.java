@@ -12,6 +12,14 @@ public class Payables implements Serializable {
 
     private List<Payable> payables = new ArrayList<>();
 
+    public Payables(ArrayList<Payable> payables) {
+        this.payables=payables;
+    }
+
+    public Payables(){
+
+    }
+
     public List<Payable> getPayables() {
         return payables;
     }

@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -18,6 +19,13 @@ public class UserGroups implements Serializable {
     @ApiModelProperty(hidden = true)
     private String errorMessage;
 
+    public Users get(String id){
+        return userGroups
+                .stream()
+                .filter(users -> users.getId().equals(id))
+                .findFirst()
+                .orElse(new Users());
+    }
 
     public Set<Users> getUserGroups() {
         return userGroups;

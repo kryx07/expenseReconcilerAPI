@@ -98,9 +98,5 @@ public class TransactionsController {
 
     }
 
-    @RequestMapping(value = "/dupa",method = RequestMethod.POST)
-    public ResponseEntity<User> dupaDupa (@RequestBody User user){
-        System.out.println(user.getUserName());
-        return new ResponseEntity<User>(user,HttpStatus.OK);
-    }
+
 }

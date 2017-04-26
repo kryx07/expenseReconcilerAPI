@@ -14,6 +14,7 @@ public class Users implements Serializable {
 
     private long serialVersionUID = 13853924648436l;
 
+    @ApiModelProperty(hidden = true)
     private String id;
     private Set<User> users = new HashSet<>();
 
