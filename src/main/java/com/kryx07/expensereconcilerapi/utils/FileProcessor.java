@@ -15,7 +15,7 @@ public class FileProcessor<T>{
         this.fileName = fileName;
     }
 
-    final static Logger logger = Logger.getLogger(FileProcessor.class);
+    private final static Logger logger = Logger.getLogger(FileProcessor.class);
 
 
     public void save(T object) {

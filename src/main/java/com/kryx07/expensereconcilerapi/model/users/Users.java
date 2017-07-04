@@ -4,20 +4,31 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModelProperty;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Entity
+@Table(name = "USERS_GROUPS")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Users implements Serializable {
 
+    @Transient
     private long serialVersionUID = 13853924648436l;
 
+
     @ApiModelProperty(hidden = true)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "Id", nullable = false)
     private String id;
+
+    @OneToMany(mappedBy = "userName")
     private Set<User> users = new HashSet<>();
 
+    @Transient
     @ApiModelProperty(hidden = true)
     private String errorMessage;
 
@@ -70,7 +81,7 @@ public class Users implements Serializable {
     }
 
     public void addAll(Users users) {
-        users.getUsers().stream().forEach(u->add(u));
+        users.getUsers().stream().forEach(u -> add(u));
 
     }
 
@@ -105,11 +116,11 @@ public class Users implements Serializable {
     }
 
     @JsonIgnore
-    public boolean isEmpty(){
-        return users==null;
+    public boolean isEmpty() {
+        return users == null;
     }
 
-    public void distinct(){
+    public void distinct() {
         users = users.stream().distinct().collect(Collectors.toSet());
     }
 
