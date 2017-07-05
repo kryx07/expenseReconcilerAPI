@@ -23,7 +23,7 @@ public class Transactions implements Serializable {
     private String errorMessage;
 
     public Transactions(ArrayList<Transaction> transactions) {
-        this.transactions=transactions;
+        this.transactions = transactions;
     }
 
     public Transactions() {
@@ -67,10 +67,12 @@ public class Transactions implements Serializable {
     }
 
     public Transaction get(String id) {
+        Transaction transaction = new Transaction();
         return transactions
                 .stream()
                 .filter(t -> t.getId().equals(id))
-                .findFirst().get();
+                .findFirst()
+                .orElse(transaction);
     }
 
     public boolean update(String id, Transaction newTransaction) {
@@ -107,22 +109,23 @@ public class Transactions implements Serializable {
     }
 
     public boolean contains(String id) {
-        if (transactions == null){
+        if (transactions == null) {
             return false;
         }
         return transactions.contains(get(id));
     }
 
-    public int size(){
+    public int size() {
         return transactions.size();
     }
+
     @JsonIgnore
-    public boolean isEmpty(){
-        return transactions==null || errorMessage!=null;
+    public boolean isEmpty() {
+        return transactions == null || errorMessage != null;
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return ReflectionToStringBuilder.toString(this);
     }
 

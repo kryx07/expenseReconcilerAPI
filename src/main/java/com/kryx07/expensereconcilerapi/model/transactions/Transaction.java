@@ -17,6 +17,7 @@ import java.util.Optional;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Transaction implements Serializable {
 
+    @ApiModelProperty(hidden = true)
     private String id;
 
     private long serialVersionUID = 83843247273768l;
@@ -37,7 +38,7 @@ public class Transaction implements Serializable {
     @ApiModelProperty(hidden = true)
     private String errorMessage;
 
-    @JsonIgnore
+    //@JsonIgnore
     public String getId() {
         return id;
     }
@@ -77,6 +78,7 @@ public class Transaction implements Serializable {
     public void setPayer(User payer) {
         this.payer = payer;
     }
+
     @JsonIgnore
     public Users getTransactionParties() {
         return Optional.ofNullable(transactionParties)

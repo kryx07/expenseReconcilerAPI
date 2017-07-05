@@ -67,6 +67,9 @@ public class TransactionsController {
 
     @RequestMapping(method = RequestMethod.PUT)
     public ResponseEntity<Transaction> updateTransaction(@RequestParam String id, @RequestBody Transaction newTransactionInput) {
+
+        newTransactionInput.setId(id);
+
         URI uri = null;
         try {
             uri = new URI(ServletUriComponentsBuilder.fromCurrentRequestUri().build() + "/" + id);
