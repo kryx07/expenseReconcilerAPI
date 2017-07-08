@@ -3,7 +3,10 @@ package com.kryx07.expensereconcilerapi.model.users;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModelProperty;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
+import javax.validation.constraints.Null;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -70,7 +73,7 @@ public class Users implements Serializable {
     }
 
     public void addAll(Users users) {
-        users.getUsers().stream().forEach(u->add(u));
+        users.getUsers().stream().forEach(u -> add(u));
 
     }
 
@@ -93,11 +96,11 @@ public class Users implements Serializable {
     }
 
     public boolean contains(String userName) {
-        return users.contains(get(userName));
+        return users != null && users.contains(get(userName));
     }
 
     public boolean contains(User user) {
-        return users.contains(user);
+        return user != null && users != null && !users.isEmpty() && users.contains(user);
     }
 
     public int size() {
@@ -105,11 +108,11 @@ public class Users implements Serializable {
     }
 
     @JsonIgnore
-    public boolean isEmpty(){
-        return users==null;
+    public boolean isEmpty() {
+        return users == null;
     }
 
-    public void distinct(){
+    public void distinct() {
         users = users.stream().distinct().collect(Collectors.toSet());
     }
 
@@ -129,5 +132,10 @@ public class Users implements Serializable {
         int result = (int) (serialVersionUID ^ (serialVersionUID >>> 32));
         result = 31 * result + (users != null ? users.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return ReflectionToStringBuilder.toString(this, ToStringStyle.SIMPLE_STYLE);
     }
 }

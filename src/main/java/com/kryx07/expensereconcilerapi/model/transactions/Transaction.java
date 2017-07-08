@@ -8,6 +8,7 @@ import com.kryx07.expensereconcilerapi.model.users.User;
 import com.kryx07.expensereconcilerapi.model.users.Users;
 import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -116,7 +117,7 @@ public class Transaction implements Serializable {
 
     @Override
     public String toString() {
-        return ReflectionToStringBuilder.toString(this);
+        return ReflectionToStringBuilder.toString(this, ToStringStyle.SIMPLE_STYLE);
     }
 
 }

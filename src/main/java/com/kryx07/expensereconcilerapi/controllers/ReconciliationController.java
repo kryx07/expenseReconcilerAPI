@@ -1,5 +1,6 @@
 package com.kryx07.expensereconcilerapi.controllers;
 
+import com.kryx07.expensereconcilerapi.model.payables.Payable;
 import com.kryx07.expensereconcilerapi.model.payables.Payables;
 import com.kryx07.expensereconcilerapi.model.users.UserGroups;
 import com.kryx07.expensereconcilerapi.model.users.Users;
@@ -23,24 +24,33 @@ public class ReconciliationController {
         this.reconciliationService = reconciliationService;
     }
 
-    @RequestMapping(value = "/all", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/all-reconciling-groups", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<UserGroups> getAllReconcilingUserGroups() {
         return new ResponseEntity<UserGroups>(reconciliationService.getAllReconcilingUserGroups(), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/selected", method = RequestMethod.GET)
-    public ResponseEntity<Users> getReconcilingPartiesById(@RequestParam(value = "id",required = true) String id) {
-        return new ResponseEntity<Users>(reconciliationService.getReconcilingUsersByGroupId(id),HttpStatus.OK);
+    @RequestMapping(value = "/selected-reconciling-group", method = RequestMethod.GET)
+    public ResponseEntity<Users> getReconcilingPartiesById(@RequestParam(value = "id", required = true) String id) {
+        return new ResponseEntity<Users>(reconciliationService.getReconcilingUsersByGroupId(id), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/payables", method = RequestMethod.GET)
-    public ResponseEntity<Payables> getPayablesByReconcilingParties(@RequestParam(value = "id",required = true) String id) {
+    @RequestMapping(value = "/payables-by-group", method = RequestMethod.GET)
+    public ResponseEntity<Payables> getPayablesByReconcilingParties(@RequestParam(value = "id", required = true) String id) {
         return new ResponseEntity<Payables>(
                 reconciliationService
                         .getPayablesByReconcilingUsers(
                                 reconciliationService
-                                        .getReconcilingUsersByGroupId(id)),HttpStatus.OK);
+                                        .getReconcilingUsersByGroupId(id)), HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/payables-by-user", method = RequestMethod.GET)
+    public ResponseEntity<Payables> getPayablesByUser(@RequestParam(value = "userId", required = true) String userId) {
+        return new ResponseEntity<Payables>(reconciliationService.getUserPayables(userId), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/payables-all", method = RequestMethod.GET)
+    public ResponseEntity<Payables> get() {
+        return new ResponseEntity<Payables>(reconciliationService.getAllPayables(), HttpStatus.OK);
+    }
 
 }

@@ -2,6 +2,8 @@ package com.kryx07.expensereconcilerapi.model.users;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModelProperty;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.io.Serializable;
 
@@ -44,6 +46,11 @@ public class User implements Serializable {
     @Override
     public int hashCode() {
         return userName != null ? userName.hashCode() : 0;
+    }
+
+    @Override
+    public String toString() {
+        return ReflectionToStringBuilder.toString(this, ToStringStyle.SIMPLE_STYLE);
     }
 
 }

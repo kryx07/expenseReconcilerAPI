@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -49,7 +51,7 @@ public class ReconciliationService {
         getUsersStream(users)
                 .forEach(user1 -> getUsersStream(users)
                         .filter(user2 -> !user2.equals(user1))
-                        .forEach(user2 -> payables.add(calculatePayable(user1,user2,reconcilingTransactions))));
+                        .forEach(user2 -> payables.add(calculatePayable(user1, user2, reconcilingTransactions))));
 
         return payables;
     }
@@ -89,5 +91,29 @@ public class ReconciliationService {
                                 .map(t -> t.getPayables().getPayables())
                                 .flatMap(p -> p.stream())
                                 .collect(Collectors.toList())));
+    }
+
+    public Payables getUserPayables(String userId) {
+        return new Payables(new ArrayList<>(transactionsService
+                .getAllTransactions()
+                .getTransactions()
+                .stream()
+                .filter(t -> t.getTransactionParties().contains(userId))
+                .map(t -> t.getPayables())
+                .map(p -> p.getPayables())
+                .flatMap(p -> p.stream())
+                .collect(Collectors.toList())));
+    }
+
+
+    public Payables getAllPayables() {
+        return new Payables(new ArrayList<>(transactionsService
+                .getAllTransactions()
+                .getTransactions()
+                .stream()
+                .map(t -> t.getPayables())
+                .map(p -> p.getPayables())
+                .flatMap(p -> p.stream())
+                .collect(Collectors.toList())));
     }
 }

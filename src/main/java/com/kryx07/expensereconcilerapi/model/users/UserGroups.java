@@ -2,6 +2,8 @@ package com.kryx07.expensereconcilerapi.model.users;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModelProperty;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -54,5 +56,10 @@ public class UserGroups implements Serializable {
         users.setId(UUID.randomUUID().toString());
         userGroups.add(users);
         return userGroups.contains(users);
+    }
+
+    @Override
+    public String toString() {
+        return ReflectionToStringBuilder.toString(this, ToStringStyle.SIMPLE_STYLE);
     }
 }

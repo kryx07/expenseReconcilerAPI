@@ -1,6 +1,7 @@
 package com.kryx07.expensereconcilerapi.model.payables;
 
 import com.kryx07.expensereconcilerapi.model.users.Users;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
 import java.io.Serializable;
 import java.util.*;
@@ -12,7 +13,7 @@ public class Payables implements Serializable {
 
     private List<Payable> payables = new ArrayList<>();
 
-    public Payables(ArrayList<Payable> payables) {
+    public Payables(List<Payable> payables) {
         this.payables=payables;
     }
 
@@ -43,5 +44,10 @@ public class Payables implements Serializable {
         allUsers.distinct();
 
         return allUsers;
+    }
+
+    @Override
+    public String toString() {
+        return ReflectionToStringBuilder.toString(this);
     }
 }

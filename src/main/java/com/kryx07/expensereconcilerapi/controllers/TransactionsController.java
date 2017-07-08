@@ -52,7 +52,9 @@ public class TransactionsController {
     @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
     public ResponseEntity<Transaction> addTransaction(@RequestBody Transaction transaction) {
 
-        transactionsService.addTransaction(transaction);
+        if (!transactionsService.addTransaction(transaction)) {
+            return ResponseEntity.badRequest().build();
+        }
 
         URI uri = null;
         try {

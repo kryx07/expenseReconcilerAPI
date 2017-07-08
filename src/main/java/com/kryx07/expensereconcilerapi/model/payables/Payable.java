@@ -2,6 +2,7 @@ package com.kryx07.expensereconcilerapi.model.payables;
 
 
 import com.kryx07.expensereconcilerapi.model.users.User;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -46,4 +47,11 @@ public class Payable implements Serializable {
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
+
+    @Override
+    public String toString() {
+        return ReflectionToStringBuilder.toString(this);
+    }
+
+
 }

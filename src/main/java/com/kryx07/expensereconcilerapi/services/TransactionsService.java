@@ -6,9 +6,11 @@ import com.kryx07.expensereconcilerapi.model.transactions.Transactions;
 import com.kryx07.expensereconcilerapi.model.users.UserGroups;
 import com.kryx07.expensereconcilerapi.model.users.Users;
 import com.kryx07.expensereconcilerapi.utils.FileProcessor;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Optional;
 
 import static com.kryx07.expensereconcilerapi.services.errorhandling.ErrorCodes.NO_TRANSACTIONS;
@@ -20,6 +22,7 @@ public class TransactionsService {
     private FileProcessor<Transactions> transactionsFileProcessor;
     private FileProcessor<UserGroups> reconcilingUserGroupsFileProcessor;
     private UsersService usersService;
+    private Logger logger = Logger.getLogger(this.getClass());
 
     public TransactionsService() {
         this.transactionsFileProcessor = new FileProcessor<>("transactions.o");
@@ -44,20 +47,20 @@ public class TransactionsService {
 
     public boolean addTransaction(Transaction transaction) {
 
+        logger.info("Adding Transaction");
+
         Transactions allTransactions = getAllTransactions();
-        if (allTransactions.isEmpty()) {
+        if (allTransactions == null || allTransactions.isEmpty()) {
             allTransactions = new Transactions(new ArrayList<>());
         }
 
-        Users allUsers = usersService.getAllUsers();
-        /*if (allUsers.isEmpty()){
-            return false;
-        }*/
+        final Users allUsers = usersService.getAllUsers();
+
         if (!transaction
                 .getTransactionParties()
                 .getUsers()
                 .stream()
-                .allMatch(allUsers::contains)){
+                .allMatch(allUsers::contains)) {
             return false;
         }
 
@@ -106,9 +109,16 @@ public class TransactionsService {
         if (transactions == null || !transactions.contains(id)) {
             return false;
         }
+
+        newTransaction.setPayables(new PayableHandler(newTransaction).getPayables());
+
         boolean isUpdated = transactions.update(id, newTransaction);
-        transactionsFileProcessor.save(transactions);
-        return isUpdated;
+
+        if (isUpdated) {
+            transactionsFileProcessor.save(transactions);
+            return true;
+        }
+        return false;
     }
 
     public boolean delete(String id) {
