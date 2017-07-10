@@ -4,6 +4,7 @@ import com.kryx07.expensereconcilerapi.model.transactions.Transaction;
 import com.kryx07.expensereconcilerapi.model.transactions.Transactions;
 import com.kryx07.expensereconcilerapi.model.users.User;
 import com.kryx07.expensereconcilerapi.services.TransactionsService;
+import com.kryx07.expensereconcilerapi.utils.StringUtilities;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,14 +41,13 @@ public class TransactionsController {
                 new ResponseEntity<Transaction>(transactionsService.getTransactionById(id), HttpStatus.OK);
     }
 
-   /* @RequestMapping(method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<TransactionOutputs> getBookByAuthor(@RequestParam String author) {
-        TransactionOutputs transactionsByAuthor = transactionsService.getBookByAuthor(author);
-        return transactionsByAuthor == null ?
-                new ResponseEntity<TransactionOutputs>(transactionsService
-                        .createUsersWithError("No books of " + author + " have been found!"), HttpStatus.NOT_FOUND) :
-                new ResponseEntity<TransactionOutputs>(transactionsService.getBookByAuthor(author), HttpStatus.OK);
-    }*/
+    @RequestMapping(value = "/by-user", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<Transactions> getTransactionsByUser(@RequestParam String username) {
+        return transactionsService.getTransactionsByUser(username) == null
+                ? new ResponseEntity<Transactions>(transactionsService
+                .createTransactionsWithError("There are no transactions!"), HttpStatus.NOT_FOUND)
+                : new ResponseEntity<Transactions>(transactionsService.getTransactionsByUser(username), HttpStatus.OK);
+    }
 
     @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
     public ResponseEntity<Transaction> addTransaction(@RequestBody Transaction transaction) {
@@ -56,12 +56,7 @@ public class TransactionsController {
             return ResponseEntity.badRequest().build();
         }
 
-        URI uri = null;
-        try {
-            uri = new URI(ServletUriComponentsBuilder.fromCurrentRequestUri().build() + "/" + transaction.getId());
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
+        URI uri = StringUtilities.buildUri(ServletUriComponentsBuilder.fromCurrentRequestUri().build() + "/" + transaction.getId());
 
         return transactionsService.contains(transaction.getId()) ? ResponseEntity.created(uri).build()
                 : ResponseEntity.badRequest().build();
@@ -72,12 +67,7 @@ public class TransactionsController {
 
         newTransactionInput.setId(id);
 
-        URI uri = null;
-        try {
-            uri = new URI(ServletUriComponentsBuilder.fromCurrentRequestUri().build() + "/" + id);
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
+        URI uri = StringUtilities.buildUri(ServletUriComponentsBuilder.fromCurrentRequestUri().build() + "/" + id);
 
         return transactionsService.update(id, newTransactionInput) ?
                 ResponseEntity.created(uri).build() :

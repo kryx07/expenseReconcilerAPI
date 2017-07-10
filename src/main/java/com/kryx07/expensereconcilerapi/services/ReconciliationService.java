@@ -51,7 +51,8 @@ public class ReconciliationService {
         getUsersStream(users)
                 .forEach(user1 -> getUsersStream(users)
                         .filter(user2 -> !user2.equals(user1))
-                        .forEach(user2 -> payables.add(calculatePayable(user1, user2, reconcilingTransactions))));
+                        .forEach(user2 -> payables.add(
+                                calculatePayable(user1, user2, reconcilingTransactions), false)));
 
         return payables;
     }
@@ -69,16 +70,22 @@ public class ReconciliationService {
     }
 
     private Payable calculatePayable(User payer, User debtor, Transactions transactions) {
-        Payable payable = new Payable(payer, debtor, BigDecimal.ZERO);
+        Payable payable = new Payable("", payer, debtor, BigDecimal.ZERO);
         Payables payables = extractPayablesFromTransactions(transactions);
 
         payables.getPayables().stream()
                 .filter(p -> p.getPayer().equals(payer) && p.getDebtor().equals(debtor))
-                .forEach(p -> payable.setAmount(payable.getAmount().add(p.getAmount())));
+                .forEach(p -> {
+                    payable.setAmount(payable.getAmount().add(p.getAmount()));
+                    payable.setId(p.getId());
+                });
 
         payables.getPayables().stream()
                 .filter(p -> p.getPayer().equals(debtor) && p.getDebtor().equals(payer))
-                .forEach(p -> payable.setAmount(payable.getAmount().subtract(p.getAmount())));
+                .forEach(p -> {
+                    payable.setAmount(payable.getAmount().subtract(p.getAmount()));
+                    payable.setId(p.getId());
+                });
 
         return payable;
     }
@@ -93,16 +100,19 @@ public class ReconciliationService {
                                 .collect(Collectors.toList())));
     }
 
-    public Payables getUserPayables(String userId) {
+    public Payables getUserPayables(String username) {
         return new Payables(new ArrayList<>(transactionsService
                 .getAllTransactions()
                 .getTransactions()
                 .stream()
-                .filter(t -> t.getTransactionParties().contains(userId))
+                .filter(t -> t.getTransactionParties().contains(username))
                 .map(t -> t.getPayables())
                 .map(p -> p.getPayables())
                 .flatMap(p -> p.stream())
+                .filter(p -> p.getDebtor().getUserName().equals(username) ||
+                        p.getPayer().getUserName().equals(username))
                 .collect(Collectors.toList())));
+
     }
 
 

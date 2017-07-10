@@ -2,6 +2,7 @@ package com.kryx07.expensereconcilerapi.model.transactions;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.kryx07.expensereconcilerapi.utils.StringUtilities;
 import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -9,8 +10,6 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Transactions implements Serializable {
@@ -48,7 +47,7 @@ public class Transactions implements Serializable {
 
     public String addTransaction(Transaction transaction) {
 
-        transaction.setId(UUID.randomUUID().toString());
+        transaction.setId(StringUtilities.generateId());
         transactions.add(transaction);
         return transaction.getId();
     }

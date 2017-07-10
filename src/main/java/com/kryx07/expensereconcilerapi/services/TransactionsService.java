@@ -3,6 +3,7 @@ package com.kryx07.expensereconcilerapi.services;
 import com.kryx07.expensereconcilerapi.logic.PayableHandler;
 import com.kryx07.expensereconcilerapi.model.transactions.Transaction;
 import com.kryx07.expensereconcilerapi.model.transactions.Transactions;
+import com.kryx07.expensereconcilerapi.model.users.User;
 import com.kryx07.expensereconcilerapi.model.users.UserGroups;
 import com.kryx07.expensereconcilerapi.model.users.Users;
 import com.kryx07.expensereconcilerapi.utils.FileProcessor;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Optional;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import static com.kryx07.expensereconcilerapi.services.errorhandling.ErrorCodes.NO_TRANSACTIONS;
 import static com.kryx07.expensereconcilerapi.services.errorhandling.ErrorCodes.NO_TRANSACTION_WITH_ID;
@@ -135,5 +138,17 @@ public class TransactionsService {
     public boolean deleteAll() {
         transactionsFileProcessor.save(createTransactionsWithError(NO_TRANSACTIONS.toString()));
         return true;
+    }
+
+    public Transactions getTransactionsByUser(String username) {
+        User currentUser = new User();
+        currentUser.setUserName(username);
+
+        return new Transactions(new ArrayList<>(getAllTransactions()
+                .getTransactions()
+                .stream()
+                .filter(t -> t.getTransactionParties()
+                        .contains(currentUser))
+                .collect(Collectors.toList())));
     }
 }

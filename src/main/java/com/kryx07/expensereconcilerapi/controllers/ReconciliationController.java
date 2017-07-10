@@ -44,8 +44,8 @@ public class ReconciliationController {
     }
 
     @RequestMapping(value = "/payables-by-user", method = RequestMethod.GET)
-    public ResponseEntity<Payables> getPayablesByUser(@RequestParam(value = "userId", required = true) String userId) {
-        return new ResponseEntity<Payables>(reconciliationService.getUserPayables(userId), HttpStatus.OK);
+    public ResponseEntity<Payables> getPayablesByUser(@RequestParam(value = "username", required = true) String username) {
+        return new ResponseEntity<Payables>(reconciliationService.getUserPayables(username), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/payables-all", method = RequestMethod.GET)

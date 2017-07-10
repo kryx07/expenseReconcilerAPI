@@ -1,6 +1,7 @@
 package com.kryx07.expensereconcilerapi.model.payables;
 
 import com.kryx07.expensereconcilerapi.model.users.Users;
+import com.kryx07.expensereconcilerapi.utils.StringUtilities;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
 import java.io.Serializable;
@@ -14,10 +15,10 @@ public class Payables implements Serializable {
     private List<Payable> payables = new ArrayList<>();
 
     public Payables(List<Payable> payables) {
-        this.payables=payables;
+        this.payables = payables;
     }
 
-    public Payables(){
+    public Payables() {
 
     }
 
@@ -29,13 +30,16 @@ public class Payables implements Serializable {
         this.payables = payables;
     }
 
-    public void add(Payable payable){
+    public void add(Payable payable, boolean overwriteId) {
+        if(overwriteId){
+            payable.setId(StringUtilities.generateId());
+        }
         payables.add(payable);
     }
 
-    public Users getUsers(){
-        Users payers =  new Users(payables.stream().map(p->p.getPayer()).collect(Collectors.toSet()));
-        Users debtors =  new Users(payables.stream().map(p->p.getDebtor()).collect(Collectors.toSet()));
+    public Users getUsers() {
+        Users payers = new Users(payables.stream().map(p -> p.getPayer()).collect(Collectors.toSet()));
+        Users debtors = new Users(payables.stream().map(p -> p.getDebtor()).collect(Collectors.toSet()));
 
         Users allUsers = new Users(new HashSet<>());
         allUsers.addAll(debtors);

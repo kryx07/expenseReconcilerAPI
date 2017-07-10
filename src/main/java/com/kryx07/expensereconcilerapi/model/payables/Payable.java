@@ -11,6 +11,7 @@ public class Payable implements Serializable {
 
     private long serialVersionUID = 13842227326528l;
 
+    private String id;
     private User payer;
     private User debtor;
     private BigDecimal amount;
@@ -18,10 +19,19 @@ public class Payable implements Serializable {
     public Payable() {
     }
 
-    public Payable(User payer, User debtor, BigDecimal amount) {
+    public Payable(String id, User payer, User debtor, BigDecimal amount) {
+        this.id = id;
         this.payer = payer;
         this.debtor = debtor;
         this.amount = amount;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public User getPayer() {
